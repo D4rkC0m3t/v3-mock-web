@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VDEX - Decentralized Exchange</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #0A0E17;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Particles.js Background */
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            cursor: none; /* Hide default cursor */
+        }
+
+        /* Canvas element created by particles.js */
+        #particles-js canvas {
+            display: block;
+            vertical-align: bottom;
+            -webkit-transform: scale(1);
+            -ms-transform: scale(1);
+            transform: scale(1);
+            opacity: 1;
+            -webkit-transition: opacity .8s ease, -webkit-transform 1.4s ease;
+            transition: opacity .8s ease, transform 1.4s ease;
+        }
+
+        /* Custom cursor */
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(51, 255, 102, 0.5);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            mix-blend-mode: screen;
+            z-index: 9999;
+            transition: width 0.2s, height 0.2s, background 0.2s;
+        }
+
+        .cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(255, 51, 51, 0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 9998;
+            transition: width 0.5s, height 0.5s, border 0.5s;
+            mix-blend-mode: difference;
+        }
+
+        /* Cursor hover effect */
+        .cursor.hover {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 51, 51, 0.5);
+        }
+
+        .cursor-follower.hover {
+            width: 60px;
+            height: 60px;
+            border: 2px solid rgba(51, 255, 102, 0.5);
+        }
+
+        /* Gradient Overlay */
+        .gradient-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(20, 30, 48, 0.7) 0%, rgba(10, 40, 20, 0.6) 100%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Header & Navigation */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            background: linear-gradient(90deg, #FF3333, #33FF66);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+            font-size: 24px;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #33FF66;
+        }
+
+        /* Main Content */
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        section {
+            width: 100%;
+            padding: 80px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 40px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        /* Buttons */
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .button {
+            padding: 14px 28px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            width: 220px;
+            text-align: center;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .primary-button {
+            background: linear-gradient(90deg, #FF3333, #33FF66);
+            color: white;
+            border: none;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .primary-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #33FF66, #FF3333);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .primary-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(51, 255, 102, 0.3);
+        }
+
+        .primary-button:hover::before {
+            opacity: 1;
+        }
+
+        .secondary-button {
+            background-color: transparent;
+            color: #33FF66;
+            border: 1px solid #33FF66;
+            transition: all 0.3s;
+        }
+
+        .secondary-button:hover {
+            background-color: rgba(51, 255, 102, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(51, 255, 102, 0.15);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav {
+                gap: 15px;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            p {
+                font-size: 16px;
+            }
+        }
+
+        /* Footer */
+        footer {
+            background-color: rgba(10, 14, 23, 0.9);
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles.js Background -->
+    <div id="particles-js" class="particles-container"></div>
+
+    <!-- Custom Cursor Elements -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <!-- Gradient Overlay -->
+    <div class="gradient-overlay"></div>
+
+    <!-- Header & Navigation -->
+    <header>
+        <a href="#" class="logo">VDEX</a>
+        <nav>
+            <a href="#trading">Trading</a>
+            <a href="#exchange">Crypto Exchange</a>
+            <a href="#swap">Swap</a>
+            <a href="#login">Login/Sign-up</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="content">
+        <section class="hero-section">
+            <h1>Your Crypto Wallet</h1>
+            <h2>Secure. Beautiful. Powerful.</h2>
+            <p>Manage and exchange your crypto securely from your desktop or mobile device. Experience the next generation of digital asset management.</p>
+
+            <div class="buttons">
+                <a href="#download" class="button primary-button">Download VDEX</a>
+                <a href="#connect" class="button secondary-button">Connect Wallet</a>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="logo">VDEX</div>
+            <p>© 2023 VDEX. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Load libraries -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TweenMax.min.js"></script>
+
+    <script>
+        // Initialize particles.js with configuration
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize particles.js with configuration
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 100,
+                        "density": {
+                            "enable": true,
+                            "value_area": 1000
+                        }
+                    },
+                    "color": {
+                        "value": ["#FF3333", "#33FF66"]  // Red and green colors
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        },
+                        "polygon": {
+                            "nb_sides": 5
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.7,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 1,
+                            "opacity_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "size": {
+                        "value": 3.5,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 2,
+                            "size_min": 0.3,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 180,
+                        "color": "#33FF66",  // Green connections
+                        "opacity": 0.5,
+                        "width": 1.2,
+                        "shadow": {
+                            "enable": true,
+                            "blur": 5,
+                            "color": "#33FF66"
+                        }
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 3,
+                        "direction": "none",
+                        "random": true,
+                        "straight": false,
+                        "out_mode": "bounce",
+                        "bounce": true,
+                        "attract": {
+                            "enable": true,
+                            "rotateX": 600,
+                            "rotateY": 1200
+                        }
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "bubble"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "repulse"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 200,
+                            "line_linked": {
+                                "opacity": 1
+                            }
+                        },
+                        "bubble": {
+                            "distance": 250,
+                            "size": 6,
+                            "duration": 2,
+                            "opacity": 1,
+                            "speed": 3,
+                            "color": "#FF3333"
+                        },
+                        "repulse": {
+                            "distance": 300,
+                            "duration": 1
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        },
+                        "remove": {
+                            "particles_nb": 2
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+
+            // Initialize custom cursor
+            if (window.TweenMax) {
+                const cursor = document.querySelector('.cursor');
+                const follower = document.querySelector('.cursor-follower');
+                
+                if (cursor && follower) {
+                    let posX = 0, posY = 0;
+                    let mouseX = 0, mouseY = 0;
+                    
+                    TweenMax.to({}, 0.016, {
+                        repeat: -1,
+                        onRepeat: function() {
+                            posX += (mouseX - posX) / 9;
+                            posY += (mouseY - posY) / 9;
+                            
+                            TweenMax.set(follower, {
+                                css: {
+                                    left: posX,
+                                    top: posY
+                                }
+                            });
+                            
+                            TweenMax.set(cursor, {
+                                css: {
+                                    left: mouseX,
+                                    top: mouseY
+                                }
+                            });
+                        }
+                    });
+                    
+                    document.addEventListener('mousemove', function(e) {
+                        mouseX = e.clientX;
+                        mouseY = e.clientY;
+                    });
+                    
+                    // Hover effect for links and buttons
+                    const hoverElements = document.querySelectorAll('a, button, .feature-card');
+                    hoverElements.forEach(element => {
+                        element.addEventListener('mouseenter', function() {
+                            cursor.classList.add('hover');
+                            follower.classList.add('hover');
+                        });
+                        element.addEventListener('mouseleave', function() {
+                            cursor.classList.remove('hover');
+                            follower.classList.remove('hover');
+                        });
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

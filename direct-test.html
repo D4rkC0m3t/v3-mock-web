@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VDEX - Your Crypto Wallet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #0A0E17;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Particles.js Background */
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* Canvas element created by particles.js */
+        #particles-js canvas {
+            display: block;
+            vertical-align: bottom;
+            -webkit-transform: scale(1);
+            -ms-transform: scale(1);
+            transform: scale(1);
+            opacity: 1;
+            -webkit-transition: opacity .8s ease, -webkit-transform 1.4s ease;
+            transition: opacity .8s ease, transform 1.4s ease;
+        }
+
+        /* Gradient Overlay */
+        .gradient-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(20, 30, 48, 0.7) 0%, rgba(10, 40, 20, 0.6) 100%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .node {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background-color: #FF3333; /* Red */
+            box-shadow: 0 0 6px #FF3333;
+            transition: background-color 2s, box-shadow 2s, transform 0.5s;
+        }
+
+        .node.green {
+            background-color: #33FF66; /* Green */
+            box-shadow: 0 0 6px #33FF66;
+        }
+
+        .node:hover {
+            transform: scale(2);
+            z-index: 10;
+        }
+
+        .connection {
+            position: absolute;
+            height: 1px;
+            background-color: #FF3333; /* Red */
+            opacity: 0.2;
+            transform-origin: 0 0;
+            transition: background-color 2s, opacity 1s, height 0.5s;
+        }
+
+        .connection.green {
+            background-color: #33FF66; /* Green */
+        }
+
+        .connection.active {
+            opacity: 0.6;
+            height: 1.5px;
+        }
+
+        /* Header & Navigation */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            background: linear-gradient(90deg, #FF3333, #33FF66);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+            font-size: 24px;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #33FF66;
+        }
+
+        /* Main Content */
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        section {
+            width: 100%;
+            padding: 80px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .features-section {
+            background: linear-gradient(0deg, rgba(20, 30, 48, 0.7) 0%, rgba(10, 14, 23, 0.7) 100%);
+            padding: 100px 20px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+            margin-top: 50px;
+        }
+
+        .feature-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 30px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-card h3 {
+            background: linear-gradient(90deg, #FF3333, #33FF66);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .stats-section {
+            background: linear-gradient(0deg, rgba(10, 14, 23, 0.7) 0%, rgba(20, 30, 48, 0.7) 100%);
+            padding: 100px 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            max-width: 1000px;
+            width: 100%;
+            margin-top: 50px;
+        }
+
+        .stat-card {
+            padding: 20px;
+        }
+
+        .stat-number {
+            font-size: 42px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, rgba(255, 51, 51, 0.2) 0%, rgba(51, 255, 102, 0.2) 100%);
+            padding: 120px 20px;
+            margin-top: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(51, 255, 102, 0.1) 0%, rgba(255, 51, 51, 0.1) 100%);
+            opacity: 0.5;
+            z-index: -1;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 40px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        /* Buttons */
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .button {
+            padding: 14px 28px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            width: 220px;
+            text-align: center;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .primary-button {
+            background: linear-gradient(90deg, #FF3333, #33FF66);
+            color: white;
+            border: none;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .primary-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #33FF66, #FF3333);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .primary-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(51, 255, 102, 0.3);
+        }
+
+        .primary-button:hover::before {
+            opacity: 1;
+        }
+
+        .secondary-button {
+            background-color: transparent;
+            color: #33FF66;
+            border: 1px solid #33FF66;
+            transition: all 0.3s;
+        }
+
+        .secondary-button:hover {
+            background-color: rgba(51, 255, 102, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(51, 255, 102, 0.15);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav {
+                gap: 15px;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            p {
+                font-size: 16px;
+            }
+        }
+
+        /* Animation */
+        @keyframes pulse {
+            0% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0.6; transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 3s infinite ease-in-out;
+        }
+
+        @keyframes colorShift {
+            0% { background-color: #FF3333; box-shadow: 0 0 6px #FF3333; }
+            50% { background-color: #33FF66; box-shadow: 0 0 6px #33FF66; }
+            100% { background-color: #FF3333; box-shadow: 0 0 6px #FF3333; }
+        }
+
+        @keyframes plexusPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.5); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes connectionFlash {
+            0% { opacity: 0.2; height: 1px; }
+            50% { opacity: 0.8; height: 2px; }
+            100% { opacity: 0.2; height: 1px; }
+        }
+
+        .color-shift {
+            animation: colorShift 5s infinite ease-in-out;
+        }
+
+        .plexus-pulse {
+            animation: plexusPulse 4s infinite ease-in-out;
+        }
+
+        .connection-flash {
+            animation: connectionFlash 3s infinite ease-in-out;
+        }
+
+        /* Reveal Animation */
+        .reveal-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        .revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Footer */
+        footer {
+            background-color: rgba(10, 14, 23, 0.9);
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles.js Background -->
+    <div id="particles-js" class="particles-container"></div>
+
+    <!-- Gradient Overlay -->
+    <div class="gradient-overlay"></div>
+
+    <!-- Load particles.js library -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+    <!-- Header & Navigation -->
+    <header>
+        <a href="#" class="logo">VDEX</a>
+        <nav>
+            <a href="#trading">Trading</a>
+            <a href="#exchange">Crypto Exchange</a>
+            <a href="#swap">Swap</a>
+            <a href="#login">Login/Sign-up</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="content">
+        <section class="hero-section">
+            <h1>Your Crypto Wallet</h1>
+            <h2>Secure. Beautiful. Powerful.</h2>
+            <p>Manage and exchange your crypto securely from your desktop or mobile device. Experience the next generation of digital asset management.</p>
+
+            <div class="buttons">
+                <a href="#download" class="button primary-button">Download VDEX</a>
+                <a href="#connect" class="button secondary-button">Connect Wallet</a>
+            </div>
+        </section>
+
+        <section class="features-section">
+            <h2>Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>Secure Storage</h3>
+                    <p>Keep your assets safe with industry-leading security protocols and multi-factor authentication.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Fast Trading</h3>
+                    <p>Execute trades quickly with our high-performance trading engine and low latency connections.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Multi-Chain Support</h3>
+                    <p>Manage assets across multiple blockchains from a single, unified interface.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats-section">
+            <h2>VDEX by the Numbers</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">$1.2B+</div>
+                    <div class="stat-label">Trading Volume</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">500K+</div>
+                    <div class="stat-label">Active Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">20+</div>
+                    <div class="stat-label">Supported Chains</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <h2>Ready to Get Started?</h2>
+            <p>Join thousands of users who trust VDEX for their crypto needs.</p>
+            <div class="buttons">
+                <a href="#download" class="button primary-button">Download VDEX</a>
+                <a href="#connect" class="button secondary-button">Connect Wallet</a>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="logo">VDEX</div>
+            <p>© 2023 VDEX. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Create network visualization for each layer
+        const networkBg1 = document.getElementById('network-bg-1');
+        const networkBg2 = document.getElementById('network-bg-2');
+        const networkBg3 = document.getElementById('network-bg-3');
+
+        // Function to create network visualization
+        function createNetworkVisualization(container, nodeCount, connectionDensity, nodeSize, speed) {
+            const nodes = [];
+            const connections = [];
+
+            // Generate random nodes
+            for (let i = 0; i < nodeCount; i++) {
+                const node = document.createElement('div');
+                node.className = 'node';
+
+                // Randomly assign green color to some nodes
+                if (Math.random() > 0.5) {
+                    node.classList.add('green');
+                }
+
+                // Add animations to nodes
+                const rand = Math.random();
+                if (rand > 0.8) {
+                    node.classList.add('pulse');
+                } else if (rand > 0.6) {
+                    node.classList.add('color-shift');
+                } else if (rand > 0.4) {
+                    node.classList.add('plexus-pulse');
+                }
+
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const size = Math.random() * nodeSize + 2;
+
+                node.style.left = `${x}%`;
+                node.style.top = `${y}%`;
+                node.style.width = `${size}px`;
+                node.style.height = `${size}px`;
+
+                container.appendChild(node);
+                nodes.push({
+                    element: node,
+                    x,
+                    y,
+                    isGreen: node.classList.contains('green'),
+                    connections: []
+                });
+            }
+
+            // Generate connections between nodes
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    // Only connect some nodes (not all)
+                    if (Math.random() > connectionDensity) {
+                        const connection = document.createElement('div');
+                        connection.className = 'connection';
+
+                        // Match connection color to source node
+                        if (nodes[i].element.classList.contains('green')) {
+                            connection.classList.add('green');
+                        }
+
+                        // Add animation to some connections
+                        if (Math.random() > 0.7) {
+                            connection.classList.add('connection-flash');
+                        }
+
+                        const fromNode = nodes[i];
+                        const toNode = nodes[j];
+
+                        // Calculate distance and angle
+                        const dx = (toNode.x - fromNode.x) * container.offsetWidth / 100;
+                        const dy = (toNode.y - fromNode.y) * container.offsetHeight / 100;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+                        connection.style.left = `${fromNode.x}%`;
+                        connection.style.top = `${fromNode.y}%`;
+                        connection.style.width = `${distance}px`;
+                        connection.style.transform = `rotate(${angle}deg)`;
+
+                        container.appendChild(connection);
+                        const connectionObj = {
+                            element: connection,
+                            fromNode: fromNode,
+                            toNode: toNode,
+                            isGreen: connection.classList.contains('green')
+                        };
+
+                        // Store the connection
+                        connections.push(connectionObj);
+
+                        // Add reference to the nodes for plexus effect
+                        fromNode.connections.push(connectionObj);
+                        toNode.connections.push(connectionObj);
+                    }
+                }
+            }
+
+            return { nodes, connections };
+        }
+
+        // Create network visualizations for each layer with different densities
+        // Parameters: container, nodeCount, connectionDensity, nodeSize, speed
+        const layer1 = createNetworkVisualization(networkBg1, 25, 0.7, 3, 0.2);  // More nodes, more connections
+        const layer2 = createNetworkVisualization(networkBg2, 20, 0.65, 4, 0.4); // Medium density
+        const layer3 = createNetworkVisualization(networkBg3, 15, 0.6, 5, 0.6);  // Fewer nodes but larger
+
+        // Combine all nodes and connections for animation
+        const allLayers = [layer1, layer2, layer3];
+
+        // Add parallax scrolling effect
+        window.addEventListener('scroll', () => {
+            const scrollPosition = window.pageYOffset;
+
+            document.querySelectorAll('.parallax-layer').forEach(layer => {
+                const speed = parseFloat(layer.getAttribute('data-speed'));
+                const yPos = -(scrollPosition * speed);
+                layer.style.transform = `translateY(${yPos}px)`;
+            });
+        });
+
+        // Add some movement to the nodes
+        function moveNodes() {
+            allLayers.forEach(layer => {
+                layer.nodes.forEach(node => {
+                    if (Math.random() > 0.995) { // Occasionally move a node
+                        const currentX = parseFloat(node.element.style.left);
+                        const currentY = parseFloat(node.element.style.top);
+
+                        // Small random movement
+                        const newX = Math.max(0, Math.min(100, currentX + (Math.random() - 0.5) * 2));
+                        const newY = Math.max(0, Math.min(100, currentY + (Math.random() - 0.5) * 2));
+
+                        // Animate the movement
+                        node.element.style.transition = 'left 3s ease, top 3s ease';
+                        node.element.style.left = `${newX}%`;
+                        node.element.style.top = `${newY}%`;
+
+                        // Update the node's position in our data
+                        node.x = newX;
+                        node.y = newY;
+                    }
+
+                    // Occasionally change color
+                    if (Math.random() > 0.998) {
+                        if (node.isGreen) {
+                            node.element.classList.remove('green');
+                            node.isGreen = false;
+
+                            // Update connected lines
+                            node.connections.forEach(conn => {
+                                if (conn.fromNode === node || conn.toNode === node) {
+                                    conn.element.classList.remove('green');
+                                    conn.isGreen = false;
+                                }
+                            });
+                        } else {
+                            node.element.classList.add('green');
+                            node.isGreen = true;
+
+                            // Update connected lines
+                            node.connections.forEach(conn => {
+                                if (conn.fromNode === node || conn.toNode === node) {
+                                    conn.element.classList.add('green');
+                                    conn.isGreen = true;
+                                }
+                            });
+                        }
+                    }
+
+                    // Plexus effect: occasionally highlight connections
+                    if (Math.random() > 0.995) {
+                        // Activate all connections for this node
+                        node.connections.forEach(conn => {
+                            conn.element.classList.add('active');
+
+                            // Deactivate after a delay
+                            setTimeout(() => {
+                                conn.element.classList.remove('active');
+                            }, 500 + Math.random() * 1000);
+                        });
+                    }
+                });
+
+                // Update connections (only those not directly tied to node color changes)
+                layer.connections.forEach(connection => {
+                    // Occasionally change color independently (less frequently)
+                    if (Math.random() > 0.9995) {
+                        if (connection.isGreen) {
+                            connection.element.classList.remove('green');
+                            connection.isGreen = false;
+                        } else {
+                            connection.element.classList.add('green');
+                            connection.isGreen = true;
+                        }
+                    }
+
+                    // Occasionally activate connection for plexus effect
+                    if (Math.random() > 0.9995) {
+                        connection.element.classList.add('active');
+
+                        // Deactivate after a delay
+                        setTimeout(() => {
+                            connection.element.classList.remove('active');
+                        }, 300 + Math.random() * 700);
+                    }
+                });
+            });
+
+            requestAnimationFrame(moveNodes);
+        }
+
+        // Color wave effect
+        function colorWave() {
+            let layerIndex = 0;
+            let nodeIndex = 0;
+
+            function animateNextNode() {
+                if (layerIndex < allLayers.length) {
+                    const layer = allLayers[layerIndex];
+
+                    if (nodeIndex < layer.nodes.length) {
+                        const node = layer.nodes[nodeIndex];
+
+                        // Toggle color
+                        if (node.isGreen) {
+                            node.element.classList.remove('green');
+                            node.isGreen = false;
+
+                            // Update connected lines
+                            node.connections.forEach(conn => {
+                                if (conn.fromNode === node || conn.toNode === node) {
+                                    conn.element.classList.remove('green');
+                                    conn.isGreen = false;
+                                }
+
+                                // Activate connection for plexus effect
+                                conn.element.classList.add('active');
+
+                                // Deactivate after a delay
+                                setTimeout(() => {
+                                    conn.element.classList.remove('active');
+                                }, 300 + Math.random() * 500);
+                            });
+                        } else {
+                            node.element.classList.add('green');
+                            node.isGreen = true;
+
+                            // Update connected lines
+                            node.connections.forEach(conn => {
+                                if (conn.fromNode === node || conn.toNode === node) {
+                                    conn.element.classList.add('green');
+                                    conn.isGreen = true;
+                                }
+
+                                // Activate connection for plexus effect
+                                conn.element.classList.add('active');
+
+                                // Deactivate after a delay
+                                setTimeout(() => {
+                                    conn.element.classList.remove('active');
+                                }, 300 + Math.random() * 500);
+                            });
+                        }
+
+                        nodeIndex++;
+                    } else {
+                        nodeIndex = 0;
+                        layerIndex++;
+                    }
+
+                    setTimeout(animateNextNode, 50); // Delay between each node
+                } else {
+                    // Reset and schedule next wave after a delay
+                    setTimeout(colorWave, 10000); // Wait 10 seconds before next wave
+                }
+            }
+
+            animateNextNode();
+        }
+
+        // Reveal animations for sections
+        function revealSections() {
+            const sections = document.querySelectorAll('section');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            sections.forEach(section => {
+                section.classList.add('reveal-section');
+                observer.observe(section);
+            });
+        }
+
+        // Start the animations
+        moveNodes();
+        setTimeout(colorWave, 5000); // Start first wave after 5 seconds
+        revealSections();
+
+        // Initialize parallax effect on page load
+        window.dispatchEvent(new Event('scroll'));
+    </script>
+</body>
+</html>

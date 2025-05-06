@@ -1,0 +1,27 @@
+Wallet Address
+0xca1227357d46470e733c816DCB705e79f9fa4790
+
+Private Key (Keep this secret!)
+Private Key (Keep this secret!)
+0x3383ac8297eea38511e7c52fa3d3df4b82641949249efd463faec6d5c66936cd
+
+Mnemonic Phrase (Keep this secret!)
+unlock muffin guess focus stool west innocent pupil eye chair nation media
+
+
+https://eth-sepolia.g.alchemy.com/v2/_43V82zF2JrnEnxBkJz0PTjBq9w-R9dz
+
+
+
+wallet adress :
+
+0x7924357653e984de9A3E6BFDBd0d0EA3f03d907B
+
+Private Key (Keep this secret!)
+
+0x798d082b29db66a94c3feed1fbe72ab00c5a5a1812b238e141facd69cafd5d01
+
+
+Mnemonic Phrase (Keep this secret!)
+
+hair attitude wrong kiwi congress assist issue fantasy blanket shiver help canvas

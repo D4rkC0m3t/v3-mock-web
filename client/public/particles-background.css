@@ -1,0 +1,93 @@
+/**
+ * Particles.js Background and Custom Cursor Styles
+ */
+
+/* Particles.js Background */
+.particles-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  cursor: none; /* Hide default cursor */
+}
+
+/* Canvas element created by particles.js */
+#particles-js canvas {
+  display: block;
+  vertical-align: bottom;
+  -webkit-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+  opacity: 1;
+  -webkit-transition: opacity .8s ease, -webkit-transform 1.4s ease;
+  transition: opacity .8s ease, transform 1.4s ease;
+}
+
+/* Gradient Overlay */
+.gradient-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(20, 30, 48, 0.7) 0%, rgba(10, 40, 20, 0.6) 100%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Custom cursor */
+.cursor {
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(51, 255, 102, 0.5);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  mix-blend-mode: screen;
+  z-index: 9999;
+  transition: width 0.2s, height 0.2s, background 0.2s;
+}
+
+.cursor-follower {
+  position: fixed;
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(255, 51, 51, 0.5);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9998;
+  transition: width 0.5s, height 0.5s, border 0.5s;
+  mix-blend-mode: difference;
+}
+
+/* Cursor hover effect */
+.cursor.hover {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 51, 51, 0.5);
+}
+
+.cursor-follower.hover {
+  width: 60px;
+  height: 60px;
+  border: 2px solid rgba(51, 255, 102, 0.5);
+}
+
+/* Make sure all interactive elements have cursor: none */
+body {
+  cursor: none;
+}
+
+a, button, .feature-card {
+  cursor: none;
+}
+
+/* Ensure content is above the background */
+#root {
+  position: relative;
+  z-index: 1;
+}

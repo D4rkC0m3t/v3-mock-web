@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Console Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Console Test</h1>
+        <p>Open your browser console (F12) to see any errors.</p>
+        
+        <div>
+            <button id="testApi">Test API</button>
+            <button id="testAuth">Test Auth</button>
+            <button id="testWallet">Test Wallet Route</button>
+        </div>
+        
+        <h2>Response:</h2>
+        <pre id="response">Click a button to see the response...</pre>
+        
+        <h2>Console Errors:</h2>
+        <pre id="errors">No errors yet...</pre>
+    </div>
+
+    <script>
+        // Capture console errors
+        const errorLog = [];
+        const originalConsoleError = console.error;
+        console.error = function() {
+            errorLog.push(Array.from(arguments).join(' '));
+            document.getElementById('errors').textContent = errorLog.join('\n');
+            originalConsoleError.apply(console, arguments);
+        };
+
+        // Test API
+        document.getElementById('testApi').addEventListener('click', async () => {
+            const responseElement = document.getElementById('response');
+            responseElement.textContent = 'Loading...';
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/stats');
+                const data = await response.json();
+                responseElement.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                responseElement.textContent = `Error: ${error.message}`;
+                console.error('API Test Error:', error);
+            }
+        });
+
+        // Test Auth
+        document.getElementById('testAuth').addEventListener('click', async () => {
+            const responseElement = document.getElementById('response');
+            responseElement.textContent = 'Loading...';
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'test@example.com',
+                        password: 'password123'
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                responseElement.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                responseElement.textContent = `Error: ${error.message}`;
+                console.error('Auth Test Error:', error);
+            }
+        });
+
+        // Test Wallet Route
+        document.getElementById('testWallet').addEventListener('click', async () => {
+            const responseElement = document.getElementById('response');
+            responseElement.textContent = 'Loading...';
+            
+            try {
+                // Try to navigate to the wallet page
+                responseElement.textContent = 'Attempting to navigate to /wallet...';
+                
+                // Create an iframe to test navigation without leaving the page
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = '/wallet';
+                
+                iframe.onload = () => {
+                    responseElement.textContent = 'Navigation successful!';
+                };
+                
+                iframe.onerror = (error) => {
+                    responseElement.textContent = `Navigation error: ${error.message}`;
+                    console.error('Wallet Route Error:', error);
+                };
+                
+                document.body.appendChild(iframe);
+                
+                // Also try to fetch the wallet page directly
+                const response = await fetch('/wallet');
+                const text = await response.text();
+                console.log('Wallet page response:', text.substring(0, 100) + '...');
+            } catch (error) {
+                responseElement.textContent = `Error: ${error.message}`;
+                console.error('Wallet Route Error:', error);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#9c27b0" />
+      <stop offset="100%" style="stop-color:#673ab7" />
+    </linearGradient>
+    <linearGradient id="cubeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff4444" />
+      <stop offset="100%" style="stop-color:#cc0000" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Cube with handshake icon -->
+  <g transform="translate(0, 5)">
+    <path d="M25 0L30 5L25 10L20 5L25 0Z" fill="url(#cubeGradient)" />
+    <path d="M20 5L25 10L25 20L20 15L20 5Z" fill="url(#cubeGradient)" opacity="0.9" />
+    <path d="M25 10L30 5L30 15L25 20L25 10Z" fill="url(#cubeGradient)" opacity="0.8" />
+    
+    <!-- Handshake symbol -->
+    <path d="M22 8L28 8C28 8 27 12 25 12C23 12 22 8 22 8Z" fill="white" opacity="0.9" />
+  </g>
+  
+  <!-- VDEX text -->
+  <text x="40" y="25" font-family="Arial, sans-serif" font-weight="bold" font-size="24" fill="url(#textGradient)">VDEX</text>
+</svg>

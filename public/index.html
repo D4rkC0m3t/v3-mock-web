@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Client</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #0A0E17;
+            color: white;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #00F0FF;
+            color: #0A0E17;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #00D6E4;
+        }
+        pre {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        h1, h2 {
+            color: #00F0FF;
+        }
+    </style>
+</head>
+<body>
+    <h1>Basic Client</h1>
+    <p>This is a simple client to test API connectivity.</p>
+    
+    <div class="container">
+        <h2>Test API</h2>
+        <button id="testApi">Call Hello API</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('testApi').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>Loading...</p>';
+            
+            try {
+                const response = await fetch('/api/hello');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                resultDiv.innerHTML = '<p>Response:</p><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                resultDiv.innerHTML = '<p style="color: #ff5555;">Error: ' + error.message + '</p>';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direct API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Direct API Test</h1>
+        <p>This page tests direct API connections without using Vite or any server-side proxy.</p>
+        
+        <div>
+            <button id="testDirect">Test Direct API (localhost:3001)</button>
+            <button id="testCors">Test with CORS Headers</button>
+            <button id="testJsonp">Test with JSONP</button>
+        </div>
+        
+        <h2>Response:</h2>
+        <pre id="response">Click a button to see the response...</pre>
+        
+        <h2>Status:</h2>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        const responseElement = document.getElementById('response');
+        const statusElement = document.getElementById('status');
+        
+        function showError(message) {
+            statusElement.innerHTML = `<p class="error">Error: ${message}</p>`;
+        }
+        
+        function showSuccess(message) {
+            statusElement.innerHTML = `<p class="success">Success: ${message}</p>`;
+        }
+        
+        // Test direct API call
+        document.getElementById('testDirect').addEventListener('click', async () => {
+            responseElement.textContent = 'Loading...';
+            statusElement.innerHTML = '';
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/stats', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                responseElement.textContent = JSON.stringify(data, null, 2);
+                showSuccess('API call completed successfully');
+            } catch (error) {
+                responseElement.textContent = `Error: ${error.message}`;
+                showError(error.message);
+            }
+        });
+        
+        // Test with CORS headers
+        document.getElementById('testCors').addEventListener('click', async () => {
+            responseElement.textContent = 'Loading...';
+            statusElement.innerHTML = '';
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/stats', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Origin': window.location.origin
+                    },
+                    mode: 'cors'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                responseElement.textContent = JSON.stringify(data, null, 2);
+                showSuccess('CORS API call completed successfully');
+            } catch (error) {
+                responseElement.textContent = `Error: ${error.message}`;
+                showError(error.message);
+            }
+        });
+        
+        // Test with JSONP (for older browsers/APIs)
+        document.getElementById('testJsonp').addEventListener('click', () => {
+            responseElement.textContent = 'Loading...';
+            statusElement.innerHTML = '';
+            
+            // Create a script element
+            const script = document.createElement('script');
+            
+            // Create a unique callback name
+            const callbackName = 'jsonpCallback_' + Math.round(Math.random() * 1000000);
+            
+            // Define the callback function
+            window[callbackName] = function(data) {
+                responseElement.textContent = JSON.stringify(data, null, 2);
+                showSuccess('JSONP call completed successfully');
+                
+                // Clean up
+                delete window[callbackName];
+                document.body.removeChild(script);
+            };
+            
+            // Set the src attribute with the callback parameter
+            script.src = `http://localhost:3001/api/stats?callback=${callbackName}`;
+            
+            // Handle errors
+            script.onerror = function() {
+                responseElement.textContent = 'Error: JSONP request failed';
+                showError('JSONP request failed');
+                
+                // Clean up
+                delete window[callbackName];
+                document.body.removeChild(script);
+            };
+            
+            // Append the script to the document
+            document.body.appendChild(script);
+        });
+    </script>
+</body>
+</html>

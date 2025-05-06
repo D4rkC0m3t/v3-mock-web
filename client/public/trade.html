@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trade - VDEX Crypto Exchange</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            background-color: #0A0E17;
+        }
+
+        html, body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0A0E17;
+            color: white;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            scroll-behavior: smooth;
+            perspective: 1000px;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 20%, rgba(0, 240, 255, 0.08) 0%, transparent 60%),
+                       radial-gradient(circle at 70% 60%, rgba(0, 163, 255, 0.08) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch' /%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noiseFilter)' /%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00F0FF, #00A3FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
+            letter-spacing: -0.02em;
+            margin: 0;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 10;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+            border-radius: 0 0 15px 15px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 10px 20px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav a::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 240, 255, 0.1);
+            border-radius: 12px;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.5s ease;
+            z-index: -1;
+        }
+
+        nav a:hover::before, nav a.active::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        nav a:hover, nav a.active {
+            color: #00F0FF;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+        }
+        main {
+            flex: 1;
+            padding: 0;
+            width: 100%;
+            position: relative;
+            z-index: 5;
+            box-sizing: border-box;
+            min-height: calc(100vh - 200px); /* Adjust based on header and footer height */
+            overflow: hidden;
+        }
+
+        .hero-section {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 800px;
+            padding: 0 20px;
+            transform: translateZ(50px);
+            transition: transform 0.5s ease;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #00F0FF, #0066FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transform: translateZ(80px);
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.8);
+            transform: translateZ(60px);
+        }
+
+        .hero-cta {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #00F0FF, #0066FF);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0, 240, 255, 0.3);
+            transition: all 0.3s ease;
+            transform: translateZ(70px);
+        }
+
+        .hero-cta:hover {
+            transform: translateZ(70px) translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 240, 255, 0.5);
+        }
+
+        .content-section {
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #00F0FF, #00A3FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(15px);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            border-radius: 17px;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.4), rgba(0, 163, 255, 0.2));
+            opacity: 0.5;
+            z-index: -1;
+        }
+
+        .card:hover {
+            box-shadow: 0 15px 40px rgba(0, 240, 255, 0.2), 0 0 25px rgba(0, 240, 255, 0.1) inset;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        h1, h2, h3 {
+            font-weight: 700;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .chart {
+            width: 100%;
+            height: 300px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) inset;
+            position: relative;
+            overflow: hidden;
+            background-image: linear-gradient(to bottom, rgba(0, 240, 255, 0.05) 1px, transparent 1px),
+                            linear-gradient(to right, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .chart::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(0, 240, 255, 0), rgba(0, 240, 255, 0.5), rgba(0, 240, 255, 0));
+            opacity: 0.7;
+        }
+
+        .order-form {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 15px;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) inset;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 5px;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+        }
+
+        .tab {
+            padding: 12px 25px;
+            cursor: pointer;
+            border-radius: 8px;
+            text-align: center;
+            flex: 1;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 163, 255, 0.2));
+            color: #00F0FF;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 12px;
+            display: inline-block;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            box-sizing: border-box;
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: rgba(0, 240, 255, 0.6);
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        button {
+            background: linear-gradient(135deg, #00F0FF, #00A3FF);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 240, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: all 0.5s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #2CF6FF, #0080FF);
+            box-shadow: 0 8px 25px rgba(0, 240, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(0, 240, 255, 0.1);
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-right {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #00F0FF;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(0, 240, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .social-icon:hover {
+            background: rgba(0, 240, 255, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .hero-floating-element {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            transform-style: preserve-3d;
+        }
+
+        .hero-sphere {
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle at 30% 30%, rgba(0, 240, 255, 0.2), rgba(0, 240, 255, 0.05));
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.3);
+            transform-style: preserve-3d;
+        }
+
+        .hero-cube {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            transform-style: preserve-3d;
+            animation: rotate 20s infinite linear;
+        }
+
+        .cube-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2) inset;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        @keyframes rotate {
+            0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+            100% { transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            margin-left: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .footer-right {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .copyright {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+
+        .order-book {
+            margin-top: 25px;
+        }
+
+        .order-book-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            padding: 12px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px 8px 0 0;
+        }
+
+        .order-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        .order-row:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .buy {
+            color: #4caf50;
+            font-weight: 600;
+        }
+
+        .sell {
+            color: #f44336;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating background elements -->
+    <div class="floating-element" style="position: fixed; width: 300px; height: 300px; background: radial-gradient(circle at 30% 30%, rgba(0, 240, 255, 0.1), rgba(0,0,0,0)); left: 5%; top: 30%; animation-delay: 0s; z-index: 0;" data-speed="1.2"></div>
+    <div class="floating-element" style="position: fixed; width: 250px; height: 250px; background: radial-gradient(circle at 30% 30%, rgba(0, 163, 255, 0.08), rgba(0,0,0,0)); left: 80%; top: 20%; animation-delay: 0.5s; z-index: 0;" data-speed="0.8"></div>
+    <div class="floating-element" style="position: fixed; width: 200px; height: 200px; background: radial-gradient(circle at 30% 30%, rgba(0, 100, 255, 0.05), rgba(0,0,0,0)); left: 60%; top: 70%; animation-delay: 0.3s; z-index: 0;" data-speed="1.5"></div>
+
+    <header>
+        <h1 class="logo">VDEX</h1>
+    </header>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/trade" class="active">Trade</a>
+        <a href="/wallet">Wallet</a>
+        <a href="/history">History</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/login">Login</a>
+    </nav>
+
+    <main>
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">Trade Crypto with Confidence</h1>
+                <p class="hero-subtitle">Experience seamless trading with advanced tools and real-time market data</p>
+                <a href="#trade-section" class="hero-cta">Start Trading</a>
+            </div>
+
+            <!-- 3D Elements -->
+            <div class="hero-sphere" style="top: 20%; left: 15%; transform: translateZ(100px);"></div>
+            <div class="hero-sphere" style="bottom: 15%; right: 10%; transform: translateZ(150px); width: 100px; height: 100px;"></div>
+            <div class="hero-sphere" style="top: 40%; right: 20%; transform: translateZ(80px); width: 120px; height: 120px;"></div>
+
+            <div class="hero-cube" style="top: 30%; right: 30%; transform: translateZ(120px);">
+                <div class="cube-face" style="transform: translateZ(50px);"></div>
+                <div class="cube-face" style="transform: translateZ(-50px) rotateY(180deg);"></div>
+                <div class="cube-face" style="transform: rotateY(90deg) translateZ(50px);"></div>
+                <div class="cube-face" style="transform: rotateY(-90deg) translateZ(50px);"></div>
+                <div class="cube-face" style="transform: rotateX(90deg) translateZ(50px);"></div>
+                <div class="cube-face" style="transform: rotateX(-90deg) translateZ(50px);"></div>
+            </div>
+        </section>
+
+        <section id="trade-section" class="content-section">
+            <h2 class="page-title">Trade BTC/USDT</h2>
+
+            <div class="grid">
+            <div>
+                <div class="card">
+                    <div class="chart">
+                        <h3 style="color: rgba(255, 255, 255, 0.7);">Advanced Chart Coming Soon</h3>
+                    </div>
+
+                    <div class="order-book">
+                        <h3>Order Book</h3>
+                        <div class="order-book-header">
+                            <div>Price (USDT)</div>
+                            <div>Amount (BTC)</div>
+                            <div>Total (USDT)</div>
+                        </div>
+
+                        <!-- Sell orders -->
+                        <div class="order-row">
+                            <div class="sell">61,245.00</div>
+                            <div>0.5</div>
+                            <div>30,622.50</div>
+                        </div>
+                        <div class="order-row">
+                            <div class="sell">61,240.00</div>
+                            <div>0.8</div>
+                            <div>48,992.00</div>
+                        </div>
+                        <div class="order-row">
+                            <div class="sell">61,235.00</div>
+                            <div>1.2</div>
+                            <div>73,482.00</div>
+                        </div>
+
+                        <!-- Current price -->
+                        <div class="order-row" style="background: rgba(0, 240, 255, 0.1); font-weight: bold; border-left: 3px solid #00F0FF; border-right: 3px solid #00F0FF;">
+                            <div style="color: #00F0FF;">61,230.00</div>
+                            <div>-</div>
+                            <div>-</div>
+                        </div>
+
+                        <!-- Buy orders -->
+                        <div class="order-row">
+                            <div class="buy">61,225.00</div>
+                            <div>0.7</div>
+                            <div>42,857.50</div>
+                        </div>
+                        <div class="order-row">
+                            <div class="buy">61,220.00</div>
+                            <div>1.5</div>
+                            <div>91,830.00</div>
+                        </div>
+                        <div class="order-row">
+                            <div class="buy">61,215.00</div>
+                            <div>2.3</div>
+                            <div>140,794.50</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <div class="tabs">
+                        <div class="tab active" onclick="switchTab('buy')" style="color: #4caf50;">Buy</div>
+                        <div class="tab" onclick="switchTab('sell')" style="color: #f44336;">Sell</div>
+                    </div>
+
+                    <div class="order-form" id="buyForm">
+                        <h3>Buy BTC</h3>
+
+                        <div>
+                            <label for="buyPrice">Price (USDT)</label>
+                            <input type="number" id="buyPrice" value="61230.00" step="0.01">
+                        </div>
+
+                        <div>
+                            <label for="buyAmount">Amount (BTC)</label>
+                            <input type="number" id="buyAmount" placeholder="0.00" step="0.0001">
+                        </div>
+
+                        <div>
+                            <label>Total (USDT)</label>
+                            <input type="number" id="buyTotal" placeholder="0.00" disabled>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                            <div style="width: 23%; text-align: center; padding: 8px 0; background: rgba(0, 240, 255, 0.1); border-radius: 8px; cursor: pointer; font-size: 0.9rem;" onclick="setPercentage('buy', 25)">25%</div>
+                            <div style="width: 23%; text-align: center; padding: 8px 0; background: rgba(0, 240, 255, 0.1); border-radius: 8px; cursor: pointer; font-size: 0.9rem;" onclick="setPercentage('buy', 50)">50%</div>
+                            <div style="width: 23%; text-align: center; padding: 8px 0; background: rgba(0, 240, 255, 0.1); border-radius: 8px; cursor: pointer; font-size: 0.9rem;" onclick="setPercentage('buy', 75)">75%</div>
+                            <div style="width: 23%; text-align: center; padding: 8px 0; background: rgba(0, 240, 255, 0.1); border-radius: 8px; cursor: pointer; font-size: 0.9rem;" onclick="setPercentage('buy', 100)">100%</div>
+                        </div>
+
+                        <button onclick="placeBuyOrder()" style="background: linear-gradient(135deg, #4caf50, #2e7d32);">Buy BTC</button>
+                    </div>
+
+                    <div class="order-form" id="sellForm" style="display: none;">
+                        <h3>Sell BTC</h3>
+
+                        <div>
+                            <label for="sellPrice">Price (USDT)</label>
+                            <input type="number" id="sellPrice" value="61230.00" step="0.01">
+                        </div>
+
+                        <div>
+                            <label for="sellAmount">Amount (BTC)</label>
+                            <input type="number" id="sellAmount" placeholder="0.00" step="0.0001">
+                        </div>
+
+                        <div>
+                            <label>Total (USDT)</label>
+                            <input type="number" id="sellTotal" placeholder="0.00" disabled>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                            <div style="width: 23%; text-align: center; padding: 8px 0; background: rgba(244, 67, 54, 0.1); border-radius: 8px; cursor: pointer; font-size: 0.9rem;" onclick="setPercentage('sell', 25)">25%</div>
+                            <div style="width: 23%; text-align: center; padding: 8px 0; background: rgba(244, 67, 54, 0.1); border-radius: 8px; cursor: pointer; font-size: 0.9rem;" onclick="setPercentage('sell', 50)">50%</div>
+                            <div style="width: 23%; text-align: center; padding: 8px 0; background: rgba(244, 67, 54, 0.1); border-radius: 8px; cursor: pointer; font-size: 0.9rem;" onclick="setPercentage('sell', 75)">75%</div>
+                            <div style="width: 23%; text-align: center; padding: 8px 0; background: rgba(244, 67, 54, 0.1); border-radius: 8px; cursor: pointer; font-size: 0.9rem;" onclick="setPercentage('sell', 100)">100%</div>
+                        </div>
+
+                        <button onclick="placeSellOrder()" style="background: linear-gradient(135deg, #f44336, #d32f2f); box-shadow: 0 8px 20px rgba(244, 67, 54, 0.3);">Sell BTC</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Market Trades</h3>
+                    <div class="order-book-header">
+                        <div>Price (USDT)</div>
+                        <div>Amount (BTC)</div>
+                        <div>Time</div>
+                    </div>
+
+                    <div class="order-row">
+                        <div class="buy">61,230.00</div>
+                        <div>0.12</div>
+                        <div>12:45:32</div>
+                    </div>
+                    <div class="order-row">
+                        <div class="sell">61,235.00</div>
+                        <div>0.08</div>
+                        <div>12:45:28</div>
+                    </div>
+                    <div class="order-row">
+                        <div class="buy">61,228.00</div>
+                        <div>0.25</div>
+                        <div>12:45:15</div>
+                    </div>
+                    <div class="order-row">
+                        <div class="sell">61,240.00</div>
+                        <div>0.15</div>
+                        <div>12:44:58</div>
+                    </div>
+                    <div class="order-row">
+                        <div class="buy">61,225.00</div>
+                        <div>0.32</div>
+                        <div>12:44:45</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-left">
+                <h2 class="logo" style="font-size: 1.8rem;">VDEX</h2>
+                <p class="copyright">&copy; 2025 VDEX Crypto Exchange</p>
+            </div>
+            <div class="footer-right">
+                <div class="footer-links">
+                    <a href="/">Home</a>
+                    <a href="/trade">Trade</a>
+                    <a href="/wallet">Wallet</a>
+                    <a href="/history">History</a>
+                    <a href="/dashboard">Dashboard</a>
+                </div>
+                <div class="social-icons">
+                    <div class="social-icon"><i style="color: white; font-size: 16px;">X</i></div>
+                    <div class="social-icon"><i style="color: white; font-size: 16px;">T</i></div>
+                    <div class="social-icon"><i style="color: white; font-size: 16px;">D</i></div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Add active class to current nav item
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('nav a').forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+
+        // Function to switch between buy and sell tabs
+        function switchTab(tab) {
+            if (tab === 'buy') {
+                document.getElementById('buyForm').style.display = 'block';
+                document.getElementById('sellForm').style.display = 'none';
+                document.querySelectorAll('.tab')[0].classList.add('active');
+                document.querySelectorAll('.tab')[1].classList.remove('active');
+            } else {
+                document.getElementById('buyForm').style.display = 'none';
+                document.getElementById('sellForm').style.display = 'block';
+                document.querySelectorAll('.tab')[0].classList.remove('active');
+                document.querySelectorAll('.tab')[1].classList.add('active');
+            }
+        }
+
+        // Calculate total when amount changes
+        document.getElementById('buyAmount').addEventListener('input', function() {
+            const price = parseFloat(document.getElementById('buyPrice').value.replace(',', ''));
+            const amount = parseFloat(this.value);
+            if (!isNaN(price) && !isNaN(amount)) {
+                document.getElementById('buyTotal').value = (price * amount).toFixed(2);
+            }
+        });
+
+        document.getElementById('sellAmount').addEventListener('input', function() {
+            const price = parseFloat(document.getElementById('sellPrice').value.replace(',', ''));
+            const amount = parseFloat(this.value);
+            if (!isNaN(price) && !isNaN(amount)) {
+                document.getElementById('sellTotal').value = (price * amount).toFixed(2);
+            }
+        });
+
+        // Set percentage of available balance
+        function setPercentage(type, percentage) {
+            // In a real app, this would use the actual user balance
+            const availableBalance = type === 'buy' ? 10000 : 0.5; // Example: 10000 USDT or 0.5 BTC
+
+            if (type === 'buy') {
+                const price = parseFloat(document.getElementById('buyPrice').value);
+                if (!isNaN(price) && price > 0) {
+                    const amount = ((availableBalance * percentage / 100) / price).toFixed(4);
+                    document.getElementById('buyAmount').value = amount;
+                    document.getElementById('buyTotal').value = (price * amount).toFixed(2);
+                }
+            } else {
+                const amount = (availableBalance * percentage / 100).toFixed(4);
+                document.getElementById('sellAmount').value = amount;
+
+                const price = parseFloat(document.getElementById('sellPrice').value);
+                if (!isNaN(price)) {
+                    document.getElementById('sellTotal').value = (price * amount).toFixed(2);
+                }
+            }
+        }
+
+        // Place order functions
+        function placeBuyOrder() {
+            const price = document.getElementById('buyPrice').value;
+            const amount = document.getElementById('buyAmount').value;
+            if (!amount) {
+                alert('Please enter an amount');
+                return;
+            }
+
+            // Show a more attractive notification instead of an alert
+            showNotification(`Buy order placed: ${amount} BTC at ${price} USDT`, 'success');
+        }
+
+        function placeSellOrder() {
+            const price = document.getElementById('sellPrice').value;
+            const amount = document.getElementById('sellAmount').value;
+            if (!amount) {
+                alert('Please enter an amount');
+                return;
+            }
+
+            // Show a more attractive notification instead of an alert
+            showNotification(`Sell order placed: ${amount} BTC at ${price} USDT`, 'error');
+        }
+
+        // Show notification function
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.position = 'fixed';
+            notification.style.bottom = '20px';
+            notification.style.right = '20px';
+            notification.style.padding = '15px 20px';
+            notification.style.borderRadius = '10px';
+            notification.style.color = 'white';
+            notification.style.fontWeight = '500';
+            notification.style.zIndex = '1000';
+            notification.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
+            notification.style.display = 'flex';
+            notification.style.alignItems = 'center';
+            notification.style.transition = 'all 0.3s ease';
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateY(20px)';
+
+            // Set background color based on type
+            if (type === 'success') {
+                notification.style.background = 'linear-gradient(135deg, #00C853, #009624)';
+                notification.style.borderLeft = '5px solid #00E676';
+            } else if (type === 'error') {
+                notification.style.background = 'linear-gradient(135deg, #D50000, #B71C1C)';
+                notification.style.borderLeft = '5px solid #FF1744';
+            } else {
+                notification.style.background = 'linear-gradient(135deg, #00F0FF, #00A3FF)';
+                notification.style.borderLeft = '5px solid #00F0FF';
+            }
+
+            // Add icon based on type
+            const icon = document.createElement('span');
+            icon.style.marginRight = '10px';
+            icon.style.fontSize = '20px';
+
+            if (type === 'success') {
+                icon.innerHTML = '✓';
+            } else if (type === 'error') {
+                icon.innerHTML = '✕';
+            } else {
+                icon.innerHTML = 'ℹ';
+            }
+
+            notification.appendChild(icon);
+            notification.appendChild(document.createTextNode(message));
+
+            // Add to document
+            document.body.appendChild(notification);
+
+            // Animate in
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateY(0)';
+            }, 10);
+
+            // Remove after 5 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateY(20px)';
+
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 5000);
+        }
+
+        // Add subtle parallax effect to floating elements
+        document.addEventListener('mousemove', (e) => {
+            const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
+            const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
+
+            document.querySelectorAll('.floating-element').forEach(elem => {
+                const speed = parseFloat(elem.getAttribute('data-speed') || 1);
+                elem.style.transform = `translate(${moveX * speed}px, ${moveY * speed}px)`;
+            });
+
+            // 3D parallax for hero elements
+            const heroContent = document.querySelector('.hero-content');
+            if (heroContent) {
+                heroContent.style.transform = `translateZ(50px) translate(${moveX * -0.5}px, ${moveY * -0.5}px)`;
+            }
+
+            document.querySelectorAll('.hero-sphere').forEach((sphere, index) => {
+                const speedFactor = 0.8 + (index * 0.2);
+                const baseZ = parseInt(sphere.style.transform.match(/translateZ\((\d+)px\)/)[1]);
+                sphere.style.transform = `translateZ(${baseZ}px) translate(${moveX * speedFactor * 2}px, ${moveY * speedFactor * 2}px)`;
+            });
+
+            const heroCube = document.querySelector('.hero-cube');
+            if (heroCube) {
+                const baseTransform = heroCube.style.transform.match(/translateZ\((\d+)px\)/)[1];
+                heroCube.style.transform = `translateZ(${baseTransform}px) translate(${moveX * 3}px, ${moveY * 3}px) rotateX(${moveY * 10}deg) rotateY(${-moveX * 10}deg)`;
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

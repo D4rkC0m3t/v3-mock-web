@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #0A0E17;
+            color: white;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #00F0FF;
+            color: #0A0E17;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #00D6E4;
+        }
+        pre {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .error {
+            color: #ff5555;
+            font-weight: bold;
+        }
+        .success {
+            color: #55ff7f;
+            font-weight: bold;
+        }
+        h1, h2, h3 {
+            color: #00F0FF;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simple API Test</h1>
+    
+    <div class="container">
+        <h2>Calculator API</h2>
+        <p>Test the calculator API:</p>
+        
+        <div>
+            <button id="add">Add 5 + 7</button>
+            <button id="subtract">Subtract 10 - 3</button>
+            <button id="multiply">Multiply 4 * 6</button>
+        </div>
+        
+        <h3>Response:</h3>
+        <pre id="calc-response">Click a button to see the response...</pre>
+        
+        <h3>Status:</h3>
+        <div id="calc-status"></div>
+    </div>
+    
+    <div class="container">
+        <h2>Stats API</h2>
+        <p>Test the stats API:</p>
+        
+        <div>
+            <button id="stats">Get Stats</button>
+        </div>
+        
+        <h3>Response:</h3>
+        <pre id="stats-response">Click a button to see the response...</pre>
+        
+        <h3>Status:</h3>
+        <div id="stats-status"></div>
+    </div>
+
+    <script>
+        // Calculator API
+        const calcResponseElement = document.getElementById('calc-response');
+        const calcStatusElement = document.getElementById('calc-status');
+        
+        function showCalcError(message) {
+            calcStatusElement.innerHTML = `<p class="error">Error: ${message}</p>`;
+        }
+        
+        function showCalcSuccess(message) {
+            calcStatusElement.innerHTML = `<p class="success">Success: ${message}</p>`;
+        }
+        
+        async function callCalculateApi(method, a, b) {
+            calcResponseElement.textContent = 'Loading...';
+            calcStatusElement.innerHTML = '';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/calculate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        method,
+                        params: [a, b],
+                    }),
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                calcResponseElement.textContent = JSON.stringify(data, null, 2);
+                showCalcSuccess('API call completed successfully');
+            } catch (error) {
+                calcResponseElement.textContent = `Error: ${error.message}`;
+                showCalcError(error.message);
+            }
+        }
+        
+        document.getElementById('add').addEventListener('click', () => callCalculateApi('add', 5, 7));
+        document.getElementById('subtract').addEventListener('click', () => callCalculateApi('subtract', 10, 3));
+        document.getElementById('multiply').addEventListener('click', () => callCalculateApi('multiply', 4, 6));
+        
+        // Stats API
+        const statsResponseElement = document.getElementById('stats-response');
+        const statsStatusElement = document.getElementById('stats-status');
+        
+        function showStatsError(message) {
+            statsStatusElement.innerHTML = `<p class="error">Error: ${message}</p>`;
+        }
+        
+        function showStatsSuccess(message) {
+            statsStatusElement.innerHTML = `<p class="success">Success: ${message}</p>`;
+        }
+        
+        async function fetchStats() {
+            statsResponseElement.textContent = 'Loading...';
+            statsStatusElement.innerHTML = '';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/stats');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                statsResponseElement.textContent = JSON.stringify(data, null, 2);
+                showStatsSuccess('API call completed successfully');
+            } catch (error) {
+                statsResponseElement.textContent = `Error: ${error.message}`;
+                showStatsError(error.message);
+            }
+        }
+        
+        document.getElementById('stats').addEventListener('click', fetchStats);
+    </script>
+</body>
+</html>

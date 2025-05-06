@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VDEX - Crypto Wallet</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #0A0E17;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .network-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .node {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background-color: #00F0FF;
+            box-shadow: 0 0 6px #00F0FF;
+        }
+
+        .connection {
+            position: absolute;
+            height: 1px;
+            background-color: #00F0FF;
+            opacity: 0.2;
+            transform-origin: 0 0;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            color: #00F0FF;
+            font-weight: bold;
+            font-size: 24px;
+            text-decoration: none;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            text-align: center;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 40px;
+            max-width: 600px;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .button {
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            width: 220px;
+            text-align: center;
+        }
+
+        .primary-button {
+            background-color: #00F0FF;
+            color: #0A0E17;
+        }
+
+        .secondary-button {
+            background-color: transparent;
+            color: #00F0FF;
+            border: 1px solid #00F0FF;
+        }
+
+        /* API Test Section */
+        .api-test {
+            margin-top: 50px;
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 800px;
+            width: 100%;
+            text-align: left;
+        }
+
+        .api-test h3 {
+            margin-top: 0;
+        }
+
+        .api-test button {
+            padding: 8px 16px;
+            background-color: #00F0FF;
+            color: #0A0E17;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .api-test button:hover {
+            background-color: #00D6E4;
+        }
+
+        .api-test pre {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .error {
+            color: #ff5555;
+            font-weight: bold;
+        }
+
+        .success {
+            color: #55ff7f;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="network-background" id="network-bg"></div>
+
+    <header>
+        <a href="/" class="logo">VDEX</a>
+        <nav>
+            <a href="/trading">Trading</a>
+            <a href="/exchange">Crypto Exchange</a>
+            <a href="/swap">Swap</a>
+            <a href="/login">Login/Sign-up</a>
+        </nav>
+    </header>
+
+    <div class="content">
+        <h1>Your Crypto Wallet</h1>
+        <h2>Secure. Beautiful. Powerful.</h2>
+        <p>Manage and exchange your crypto securely from your desktop or mobile device.</p>
+
+        <div class="buttons">
+            <a href="/download" class="button primary-button">Download VDEX</a>
+            <a href="/wallet" class="button secondary-button">Connect Wallet</a>
+        </div>
+
+        <div class="api-test">
+            <h3>API Test</h3>
+            <p>Test the server API connection:</p>
+
+            <div>
+                <button id="testApi">Test API</button>
+                <button id="testJsonp">Test with JSONP</button>
+            </div>
+
+            <h4>Response:</h4>
+            <pre id="response">Click a button to see the response...</pre>
+
+            <h4>Status:</h4>
+            <div id="status"></div>
+        </div>
+    </div>
+
+    <script>
+        // Create network visualization
+        const networkBg = document.getElementById('network-bg');
+
+        // Generate random nodes
+        const nodes = [];
+        for (let i = 0; i < 30; i++) {
+            const node = document.createElement('div');
+            node.className = 'node';
+
+            const x = Math.random() * 100;
+            const y = Math.random() * 100;
+            const size = Math.random() * 2 + 2;
+
+            node.style.left = `${x}%`;
+            node.style.top = `${y}%`;
+            node.style.width = `${size}px`;
+            node.style.height = `${size}px`;
+
+            networkBg.appendChild(node);
+            nodes.push({ element: node, x, y });
+        }
+
+        // Generate connections between nodes
+        for (let i = 0; i < nodes.length; i++) {
+            for (let j = i + 1; j < nodes.length; j++) {
+                // Only connect some nodes (not all)
+                if (Math.random() > 0.85) {
+                    const connection = document.createElement('div');
+                    connection.className = 'connection';
+
+                    const fromNode = nodes[i];
+                    const toNode = nodes[j];
+
+                    // Calculate distance and angle
+                    const dx = (toNode.x - fromNode.x) * window.innerWidth / 100;
+                    const dy = (toNode.y - fromNode.y) * window.innerHeight / 100;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+                    connection.style.left = `${fromNode.x}%`;
+                    connection.style.top = `${fromNode.y}%`;
+                    connection.style.width = `${distance}px`;
+                    connection.style.transform = `rotate(${angle}deg)`;
+
+                    networkBg.appendChild(connection);
+                }
+            }
+        }
+
+        // API Test functionality
+        const responseElement = document.getElementById('response');
+        const statusElement = document.getElementById('status');
+
+        function showError(message) {
+            statusElement.innerHTML = `<p class="error">Error: ${message}</p>`;
+        }
+
+        function showSuccess(message) {
+            statusElement.innerHTML = `<p class="success">Success: ${message}</p>`;
+        }
+
+        // Test API call
+        document.getElementById('testApi').addEventListener('click', async () => {
+            responseElement.textContent = 'Loading...';
+            statusElement.innerHTML = '';
+
+            try {
+                const response = await fetch('/api/stats');
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                responseElement.textContent = JSON.stringify(data, null, 2);
+                showSuccess('API call completed successfully');
+            } catch (error) {
+                responseElement.textContent = `Error: ${error.message}`;
+                showError(error.message);
+            }
+        });
+
+        // Test with JSONP
+        document.getElementById('testJsonp').addEventListener('click', () => {
+            responseElement.textContent = 'Loading...';
+            statusElement.innerHTML = '';
+
+            // Create a script element
+            const script = document.createElement('script');
+
+            // Create a unique callback name
+            const callbackName = 'jsonpCallback_' + Math.round(Math.random() * 1000000);
+
+            // Define the callback function
+            window[callbackName] = function(data) {
+                responseElement.textContent = JSON.stringify(data, null, 2);
+                showSuccess('JSONP call completed successfully');
+
+                // Clean up
+                delete window[callbackName];
+                document.body.removeChild(script);
+            };
+
+            // Set the src attribute with the callback parameter
+            script.src = `/api/stats?callback=${callbackName}`;
+
+            // Handle errors
+            script.onerror = function() {
+                responseElement.textContent = 'Error: JSONP request failed';
+                showError('JSONP request failed');
+
+                // Clean up
+                delete window[callbackName];
+                document.body.removeChild(script);
+            };
+
+            // Append the script to the document
+            document.body.appendChild(script);
+        });
+    </script>
+</body>
+</html>

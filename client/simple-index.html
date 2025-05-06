@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple React + Node Example</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #0A0E17;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module">
+    import React from 'react';
+    import ReactDOM from 'react-dom/client';
+    import SimpleAppWrapper from './src/SimpleAppWrapper';
+
+    ReactDOM.createRoot(document.getElementById('root')).render(
+      React.createElement(SimpleAppWrapper)
+    );
+  </script>
+</body>
+</html>

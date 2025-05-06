@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            overflow: auto;
+        }
+        .error {
+            color: red;
+            background-color: #ffeeee;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ffcccc;
+        }
+        .success {
+            color: green;
+            background-color: #eeffee;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccffcc;
+        }
+    </style>
+</head>
+<body>
+    <h1>API Connection Test</h1>
+    
+    <div>
+        <button id="testDirectApi">Test Direct API Call</button>
+        <div id="directApiResult"></div>
+    </div>
+    
+    <div>
+        <button id="testRelativeApi">Test Relative API Call</button>
+        <div id="relativeApiResult"></div>
+    </div>
+    
+    <div>
+        <button id="testCorsApi">Test CORS API Call</button>
+        <div id="corsApiResult"></div>
+    </div>
+    
+    <script>
+        // Test direct API call
+        document.getElementById('testDirectApi').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('directApiResult');
+            resultDiv.innerHTML = 'Testing direct API call...';
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/stats');
+                console.log('Direct API Response:', response);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Direct API Data:', data);
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <p>✅ Direct API call successful!</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Direct API Error:', error);
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <p>❌ Direct API call failed: ${error.message}</p>
+                        <p>Check browser console for details.</p>
+                    </div>
+                `;
+            }
+        });
+        
+        // Test relative API call
+        document.getElementById('testRelativeApi').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('relativeApiResult');
+            resultDiv.innerHTML = 'Testing relative API call...';
+            
+            try {
+                const response = await fetch('/api/stats');
+                console.log('Relative API Response:', response);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Relative API Data:', data);
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <p>✅ Relative API call successful!</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Relative API Error:', error);
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <p>❌ Relative API call failed: ${error.message}</p>
+                        <p>Check browser console for details.</p>
+                    </div>
+                `;
+            }
+        });
+        
+        // Test CORS API call with explicit options
+        document.getElementById('testCorsApi').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('corsApiResult');
+            resultDiv.innerHTML = 'Testing CORS API call...';
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/stats', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    mode: 'cors'
+                });
+                console.log('CORS API Response:', response);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('CORS API Data:', data);
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <p>✅ CORS API call successful!</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('CORS API Error:', error);
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <p>❌ CORS API call failed: ${error.message}</p>
+                        <p>Check browser console for details.</p>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
